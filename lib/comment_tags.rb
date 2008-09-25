@@ -133,8 +133,13 @@ module CommentTags
   }
   tag "comments:form" do |tag|
     @tag_attr = { :class => "comment_form" }.update( tag.attr.symbolize_keys )
+    if Locale && !Locale.language.nil?
+      url = tag.locals.page.translated_url(Locale.language.code)
+    else
+      url = tag.locals.page.url
+    end
     results = %Q{
-      <form action="#{tag.locals.page.url}comments" method="post" id="comment_form">
+      <form action="#{url}comments" method="post" id="comment_form">
         #{tag.expand}
       </form>
     }
