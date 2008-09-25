@@ -7,6 +7,7 @@ class CommentsController < ApplicationController
 
   def index
     @page.selected_comment = @page.comments.find_by_id(flash[:selected_comment])
+    @page.request = request
     render :text => @page.render
   end
   
@@ -19,7 +20,11 @@ class CommentsController < ApplicationController
     CommentMailer.deliver_comment_notification(comment) if Radiant::Config['comments.notification'] == "true"
     
     flash[:selected_comment] = comment.id
-    redirect_to "#{@page.url}comments#comment-#{comment.id}"
+    if defined?(SiteLanguage) && SiteLanguage.count > 1
+      redirect_to "/#{Locale.active.language.code}#{@page.url}comments#comment-#{comment.id}"
+    else
+      redirect_to "#{@page.url}comments#comment-#{comment.id}"
+    end
   rescue ActiveRecord::RecordInvalid
     @page.last_comment = comment
     render :text => @page.render
@@ -31,7 +36,9 @@ class CommentsController < ApplicationController
   
     def find_page
       url = params[:url]
-      url.shift if defined?(SiteLanguage) && SiteLanguage.count > 1
+      if defined?(SiteLanguage) && SiteLanguage.count > 1
+        Locale.set(url.shift)
+      end
       @page = Page.find_by_url(url.join("/"))
     end
     
