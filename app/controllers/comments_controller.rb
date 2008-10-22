@@ -20,7 +20,7 @@ class CommentsController < ApplicationController
     CommentMailer.deliver_comment_notification(comment) if Radiant::Config['comments.notification'] == "true"
     
     flash[:selected_comment] = comment.id
-    if defined?(SiteLanguage) && SiteLanguage.count > 1
+    if defined?(SiteLanguage) && SiteLanguage.count > 0
       redirect_to "/#{Locale.active.language.code}#{@page.url}comments#comment-#{comment.id}"
     else
       redirect_to "#{@page.url}comments#comment-#{comment.id}"
@@ -36,7 +36,7 @@ class CommentsController < ApplicationController
   
     def find_page
       url = params[:url]
-      if defined?(SiteLanguage) && SiteLanguage.count > 1
+      if defined?(SiteLanguage) && SiteLanguage.count > 0
         Locale.set(url.shift)
       end
       @page = Page.find_by_url(url.join("/"))
