@@ -47,7 +47,7 @@ class MollomSpamFilter < SpamFilter
     mollom.check_content(
       :author_name => comment.author,            # author name
       :author_mail => comment.author_email,         # author email
-      :author_url => comment.author_url,           # author url
+# this seems to make any comment wìth url marked as spam :s     :author_url => comment.author_url,           # author url
       :post_body => comment.content,              # comment text
       :author_ip => comment.author_ip
       )
